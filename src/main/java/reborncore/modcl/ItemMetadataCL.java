@@ -29,6 +29,7 @@
 package reborncore.modcl;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
@@ -68,9 +69,9 @@ public class ItemMetadataCL extends ItemCL {
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list) {
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
 		for (int meta = 0; meta < types.size(); meta++) {
-			list.add(new ItemStack(this, 1, meta));
+			list.add(new ItemStack(itemIn, 1, meta));
 		}
 	}
 

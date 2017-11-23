@@ -48,79 +48,95 @@ public class RecipeRemover {
 	}
 
 	public static void removeAnyRecipe(ItemStack resultItem) {
-		for (IRecipe tmpRecipe : CraftingManager.REGISTRY) {
+		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+		for (int i = 0; i < recipes.size(); i++) {
+			IRecipe tmpRecipe = recipes.get(i);
 			ItemStack recipeResult = tmpRecipe.getRecipeOutput();
 			if (ItemStack.areItemStacksEqual(resultItem, recipeResult)) {
-				removeRecipe(tmpRecipe);
+				recipes.remove(i--);
 			}
 		}
 	}
 
+//	public static void removeShapedRecipe(ItemStack resultItem) {
+//		for (IRecipe tmpRecipe : CraftingManager.getInstance().getRecipeList()) {
+//			if (tmpRecipe instanceof ShapedRecipes) {
+//				ShapedRecipes recipe = (ShapedRecipes) tmpRecipe;
+//				ItemStack recipeResult = recipe.getRecipeOutput();
+//				if (ItemStack.areItemStacksEqual(resultItem, recipeResult)) {
+//					removeRecipe(recipe);
+//				}
+//			}
+//		}
+//	}
 	public static void removeShapedRecipe(ItemStack resultItem) {
-		for (IRecipe tmpRecipe : CraftingManager.REGISTRY) {
+		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+		for (int i = 0; i < recipes.size(); i++) {
+			IRecipe tmpRecipe = recipes.get(i);
 			if (tmpRecipe instanceof ShapedRecipes) {
 				ShapedRecipes recipe = (ShapedRecipes) tmpRecipe;
 				ItemStack recipeResult = recipe.getRecipeOutput();
+
 				if (ItemStack.areItemStacksEqual(resultItem, recipeResult)) {
-					removeRecipe(recipe);
+					recipes.remove(i++);
 				}
 			}
 		}
 	}
 
-	private static void removeRecipe(IRecipe recipe) {
-		ForgeRegistries.RECIPES.register(new BlankRecipe(recipe));
-	}
-
-	//Hax, nothing to see here
-	//Is there a better way to do this?
-	private static class BlankRecipe implements IRecipe {
-
-		IRecipe oldRecipe;
-
-		public BlankRecipe(IRecipe oldRecipe) {
-			this.oldRecipe = oldRecipe;
-		}
-
-		@Override
-		public boolean matches(InventoryCrafting inv, World worldIn) {
-			return false;
-		}
-
-		@Override
-		public ItemStack getCraftingResult(InventoryCrafting inv) {
-			return ItemStack.EMPTY;
-		}
-
-		@Override
-		public boolean canFit(int width, int height) {
-			return false;
-		}
-
-		@Override
-		public ItemStack getRecipeOutput() {
-			return ItemStack.EMPTY;
-		}
-
-		@Override
-		public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-			return NonNullList.create();
-		}
-
-		@Override
-		public IRecipe setRegistryName(ResourceLocation name) {
-			return oldRecipe.setRegistryName(name);
-		}
-
-		@Nullable
-		@Override
-		public ResourceLocation getRegistryName() {
-			return oldRecipe.getRegistryName();
-		}
-
-		@Override
-		public Class<IRecipe> getRegistryType() {
-			return oldRecipe.getRegistryType();
-		}
-	}
+//	private static void removeRecipe(IRecipe recipe) {
+//		ForgeRegistries.get.register(new BlankRecipe(recipe));
+//	}
+//
+//	//Hax, nothing to see here
+//	//Is there a better way to do this?
+//	private static class BlankRecipe implements IRecipe {
+//
+//		IRecipe oldRecipe;
+//
+//		public BlankRecipe(IRecipe oldRecipe) {
+//			this.oldRecipe = oldRecipe;
+//		}
+//
+//		@Override
+//		public boolean matches(InventoryCrafting inv, World worldIn) {
+//			return false;
+//		}
+//
+//		@Override
+//		public ItemStack getCraftingResult(InventoryCrafting inv) {
+//			return ItemStack.EMPTY;
+//		}
+//
+//		@Override
+//		public boolean canFit(int width, int height) {
+//			return false;
+//		}
+//
+//		@Override
+//		public ItemStack getRecipeOutput() {
+//			return ItemStack.EMPTY;
+//		}
+//
+//		@Override
+//		public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+//			return NonNullList.create();
+//		}
+//
+//		@Override
+//		public IRecipe setRegistryName(ResourceLocation name) {
+//			return oldRecipe.setRegistryName(name);
+//		}
+//
+//		@Nullable
+//		@Override
+//		public ResourceLocation getRegistryName() {
+//			return oldRecipe.getRegistryName();
+//		}
+//
+//		@Override
+//		public Class<IRecipe> getRegistryType() {
+//			return oldRecipe.getRegistryType();
+//		}
+//	}
 }

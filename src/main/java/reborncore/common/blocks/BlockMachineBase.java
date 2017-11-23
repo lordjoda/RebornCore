@@ -167,7 +167,7 @@ public abstract class BlockMachineBase extends BaseTileBlock {
 			items.add(isAdvanced() ? advancedFrameStack.copy() : basicFrameStack.copy());
 		}
 		else {
-			super.getDrops(items, world, pos, state, fortune);
+			super.getDrops(world, pos, state, fortune);
 		}
 		
 		return items;

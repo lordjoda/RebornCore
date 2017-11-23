@@ -9,22 +9,18 @@ buildscript {
 			name = "Modmuss50"
 			url = "http://maven.modmuss50.me/"
 		}
-		maven {
-			url "https://plugins.gradle.org/m2/"
-		}
 	}
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-		classpath "gradle.plugin.net.minecrell:licenser:0.2.1"
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
 	}
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: net.minecrell.gradle.licenser.Licenser
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
 
 repositories {
 	maven {
@@ -32,6 +28,7 @@ repositories {
 		url = "http://maven.modmuss50.me/"
 	}
 }
+
 
 repositories {
 	maven {
@@ -40,11 +37,11 @@ repositories {
 		url = "http://maven.modmuss50.me/"
 	}
 
-	 maven {
-	 	//IC2
-	 	name = "player-ic2"
-	 	url = "http://maven.ic2.player.to/"
-	 }
+	maven {
+		//IC2
+		name = "player-ic2"
+		url = "http://maven.ic2.player.to/"
+	}
 
 	maven {
 		// Tesla
@@ -69,9 +66,11 @@ repositories {
 		name "TehNut"
 		url "http://tehnut.info/maven/"
 	}
-	maven {
-		name "Jared"
-		url "http://maven.blamejared.com/"
+
+	ivy {
+		// CraftTweaker
+		name "CraftTweaker"
+		artifactPattern "https://addons-origin.cursecdn.com/files/2392/421/[module]-[revision](-[classifier]).[ext]"
 	}
 }
 
@@ -80,7 +79,7 @@ configurations {
 	compile.extendsFrom shade
 }
 
-version = "3.4.12"
+version = "2.16.1"
 
 
 def ENV = System.getenv()
@@ -89,8 +88,8 @@ if (ENV.BUILD_NUMBER) {
 }
 
 minecraft {
-	version = "1.12.2-14.23.0.2493"
-	mappings = "snapshot_20170624"
+	version = "1.11.2-13.20.1.2530"
+	mappings = "stable_32"
 	replace "@MODVERSION@", project.version
 	runDir = "run"
 	makeObfSourceJar = false
@@ -100,17 +99,21 @@ group = 'RebornCore'
 
 
 dependencies {
-	compile 'net.industrial-craft:industrialcraft-2:2.8.26-ex112:api'
-	provided "net.darkhax.tesla:Tesla-1.12:1.0.59:deobf"
-	provided "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.0.0.5"
+	//THIS IS NOT HOW YOU INCLUDE JSON DESTROYER! LOOK AT THE EXAMPLE!
+	shade 'JSON-Destroyer:JSON-Destroyer-1.11:2.2.3:dev'
+	shade 'org.hjson:hjson:1.1.4'
+	shade 'net.industrial-craft:industrialcraft-2:2.7.5-ex111:api'
+	shade 'org.javassist:javassist:3.22.0-CR1'
+
+	compile "mezz.jei:jei_1.11.2:4.2.10.250"
+	compile "mcp.mobius.waila:Hwyla:1.8.11-B24_1.11"
+	compile "mcjty.theoneprobe:TheOneProbe:1.11-1.3.3-46"
+	compile "net.darkhax.tesla:Tesla:1.11-1.3.0.51"
+	compile "CraftTweaker:CraftTweaker:1.11.2-3.0.24"
 }
 
 processResources
 	{
-		// this will ensure that this task is redone when the versions change.
-		inputs.property "version", project.version
-		inputs.property "mcversion", project.minecraft.version
-		
 		from(sourceSets.main.resources.srcDirs) {
 			include 'mcmod.info'
 			expand 'version': project.version, 'mcversion': project.minecraft.version
@@ -121,21 +124,39 @@ processResources
 		}
 	}
 
-license {
-	header file('LICENSE.md')
-	include '**/*.java'
-	ignoreFailures = true //Stops the build from failing if a file does not have a license header
-}
 
 task deobfJar(type: Jar) {
 	from sourceSets.main.output
 	exclude "**/*.psd"
 	classifier = 'dev'
+	configurations.shade.each {dep ->
+		from(project.zipTree(dep)) {
+			include 'me/modmuss50/jsonDestroyer/'
+			include 'org/hjson/'
+			include 'ic2/api/'
+			include 'javassist/'
+		}
+	}
+	manifest {
+		attributes 'FMLCorePlugin': 'reborncore.mixin.implementations.forge.MixinForgeLoadingCore'
+		attributes 'FMLCorePluginContainsFMLMod': 'true'
+	}
 }
 
 jar {
 	exclude "**/*.psd"
 	classifier = 'universal'
+	configurations.shade.each {dep ->
+		from(project.zipTree(dep)) {
+			include 'me/modmuss50/jsonDestroyer/'
+			include 'org/hjson/'
+			include 'javassist/'
+		}
+	}
+	manifest {
+		attributes 'FMLCorePlugin': 'reborncore.mixin.implementations.forge.MixinForgeLoadingCore'
+		attributes 'FMLCorePluginContainsFMLMod': 'true'
+	}
 }
 
 task apiJar(type: Jar) {

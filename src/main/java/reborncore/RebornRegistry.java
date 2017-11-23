@@ -35,9 +35,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.GameData;
 import reborncore.common.LootManager;
 import reborncore.common.util.RebornCraftingHelper;
 
@@ -51,58 +51,39 @@ public class RebornRegistry {
 
 	public static void registerBlock(Block block, String name) {
 		block.setRegistryName(name);
-		GameData.register_impl(block);
-		ItemBlock itemBlock = new ItemBlock(block);
-		itemBlock.setRegistryName(block.getRegistryName());
-		GameData.register_impl(itemBlock);
+		GameRegistry.register(block);
+		GameRegistry.register(new ItemBlock(block), block.getRegistryName());
 	}
 
 	public static void registerBlock(Block block, ResourceLocation name) {
 		block.setRegistryName(name);
-		ItemBlock itemBlock = new ItemBlock(block);
-		itemBlock.setRegistryName(block.getRegistryName());
-		GameData.register_impl(itemBlock);
-		GameData.register_impl(block);
+		GameRegistry.register(block);
+		GameRegistry.register(new ItemBlock(block), block.getRegistryName());
 	}
 
 	public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name) {
 		block.setRegistryName(name);
-		GameData.register_impl(block);
+		GameRegistry.register(block);
 		try {
 			ItemBlock itemBlock = itemclass.getConstructor(Block.class).newInstance(block);
 			itemBlock.setRegistryName(name);
-			GameData.register_impl(itemBlock);
-		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void registerBlock(Block block, Class<? extends ItemBlock> itemclass, ResourceLocation name) {
-		block.setRegistryName(name);
-		GameData.register_impl(block);
-		try {
-			ItemBlock itemBlock = itemclass.getConstructor(Block.class).newInstance(block);
-			itemBlock.setRegistryName(name);
-			GameData.register_impl(itemBlock);
+			GameRegistry.register(itemBlock);
 		} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void registerBlock(Block block) {
-		GameData.register_impl(block);
-		ItemBlock itemBlock = new ItemBlock(block);
-		itemBlock.setRegistryName(block.getRegistryName());
-		GameData.register_impl(itemBlock);
+		GameRegistry.register(block);
+		GameRegistry.register(new ItemBlock(block), block.getRegistryName());
 	}
 
 	public static void registerItem(Item item) {
-		GameData.register_impl(item);
+		GameRegistry.register(item);
 	}
 
 	public static void registerItem(Item item, ResourceLocation name) {
-		item.setRegistryName(name);
-		GameData.register_impl(item);
+		GameRegistry.register(item, name);
 	}
 
 	public static void addShapedOreRecipe(ItemStack output, Object parm) {

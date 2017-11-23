@@ -136,7 +136,7 @@ public class MultiblockRenderEvent {
 
 	private void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha) {
 		final Tessellator tessellator = Tessellator.getInstance();
-		final BufferBuilder buffer = tessellator.getBuffer();
+		final VertexBuffer buffer = tessellator.getBuffer();
 
 		if (quads == null || quads.isEmpty()) { //Bad things
 			return;
